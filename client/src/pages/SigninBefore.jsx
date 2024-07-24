@@ -1,15 +1,12 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { signInStart, signInSuccess, signInFailure } from '../redux/user/userSlice';
-
-import { useDispatch, useSelector } from 'react-redux';
 
 export default function SignIn() {
   const [formData, setFormData] = useState({});
-  const { loading, error } = useSelector((state) => state.user); // user is the name of the state
-   console.log(loading, error);
+  const [error, setError] = useState(false);
+  const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
-  const dispatch = useDispatch();
 
   const handleChange = (e) => {
     // we keep previos value of the data
@@ -20,7 +17,9 @@ export default function SignIn() {
   const hangleSubmit = async (e) => {
     e.preventDefault();
     try {
-      dispatch(signInStart());
+      setLoading(true);
+      setError(false);
+
       const res = await fetch('/api/auth/signin', {
         method: "POST",
         headers: {
@@ -30,15 +29,14 @@ export default function SignIn() {
       });
       const data = await res.json();
       // console.log(data); message: user created successfully
+      setLoading(false);
       if (data.success == false) {
-        dispatch(signInFailure(data));
-        return;
+        setError(true);
       }
-      dispatch(signInSuccess(data));
-      navigate('/');
-
+      navigate('/')
     } catch (error) {
-      dispatch(signInFailure(error));
+      setLoading(false);
+      setError(true);
     }
   }
 
@@ -61,8 +59,8 @@ export default function SignIn() {
           <span className='text-blue-500'>Sign Up</span>
         </Link>
       </div>
-      {/* hdu err jiro err.message ka hdi err.message jirin message keyga qado */}
-      <p className='text-red-700 mt-5'>{error ? error.message || 'Something Went Wrong!' : ""}</p>
+
+      <p className='text-red-700 mt-5'>{error && 'Something Went Wrong!'}</p>
 
     </div>
   )
