@@ -1,10 +1,12 @@
 import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 
 export default function SignUp() {
   const [formData, setFormData] = useState({});
   const [error, setError] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     // we keep previos value of the data
@@ -31,6 +33,7 @@ export default function SignUp() {
       if(data.success == false) {
         setError(true);
       }
+      navigate('/sign-in')
     } catch (error) {
       setLoading(false);
       setError(true);
