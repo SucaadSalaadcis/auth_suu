@@ -7,9 +7,9 @@ import {
   updateUserStart,
   updateUserSuccess,
   updateUserFailure,
-  // deleteUserStart,
-  // deleteUserSuccess,
-  // deleteUserFailure,
+  deleteUserStart,
+  deleteUserSuccess,
+  deleteUserFailure,
   // signOut,
 } from '../redux/user/userSlice';
 
@@ -36,6 +36,7 @@ export default function Profile() {
     }
   }, [image]);
 
+  // file upload
   const handleFileUpload = async (image) => {
     // console.log(image);
 
@@ -70,7 +71,7 @@ export default function Profile() {
   };
 
 
-  
+   // handle submition
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -93,6 +94,26 @@ export default function Profile() {
       dispatch(updateUserFailure(error));
     }
   };
+
+ // delete account
+  const handleDeleteAccount = async () => {
+    try {
+      dispatch(deleteUserStart());
+      const res = await fetch(`/api/user/delete/${currentUser._id}`, {
+        method: 'DELETE',
+      });
+      const data = await res.json();
+      if (data.success === false) {
+        dispatch(deleteUserFailure(data));
+        return;
+      }
+      dispatch(deleteUserSuccess(data));
+
+    } catch (error) {
+      dispatch(deleteUserFailure(error));
+    }
+  };
+
 
 
   return (
@@ -151,12 +172,14 @@ export default function Profile() {
           onChange={handleChange}
         />
         <button className='bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-95 disabled:opacity-80'>
-        {loading ? 'Loading...' : 'Update'}
+          {loading ? 'Loading...' : 'Update'}
         </button>
       </form>
       {/* last btns */}
       <div className="flex justify-between mt-5">
-        <span className="text-red-700 cursor-pointer">Delete account</span>
+        <span onClick={handleDeleteAccount}
+          className="text-red-700 cursor-pointer" >Delete account
+        </span>
         <span className="text-red-500 cursor-pointer">Sign Out</span>
       </div>
       {/* error paragraph */}
