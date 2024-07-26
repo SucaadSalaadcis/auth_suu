@@ -4,12 +4,23 @@ dotenv.config(); // initialize
 import mongoose from 'mongoose';
 import userRoutes from './routes/user.route.js'
 import authRoute from '../api/routes/auth.route.js'
+import path from 'path'
 
 import cookieParser from 'cookie-parser';
 
+const __dirname = path.resolve();
+
 const app = express();
+
 app.use(express.json());
 app.use(cookieParser());
+
+app.use(express.static(path.join(__dirname, '/client/dist')));
+
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'));
+});
+
 
 
 mongoose.connect(process.env.MONGO).then (()=>{
